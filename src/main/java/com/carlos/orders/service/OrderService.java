@@ -8,6 +8,7 @@ import com.carlos.orders.repository.OrderMongoRepository;
 import com.carlos.orders.repository.OrderRepository;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
@@ -38,6 +39,7 @@ public class OrderService {
                 .orElseThrow(() -> new RuntimeException("Not found"));
     }
 
+    @Transactional
     public Order create(Order order) {
         Order saved = orderRepository.save(order);
 
