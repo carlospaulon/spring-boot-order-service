@@ -1,6 +1,6 @@
 HELP.md
 target/
-.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
 !**/src/main/**/target/
 !**/src/test/**/target/
 
@@ -18,6 +18,7 @@ target/
 *.iws
 *.iml
 *.ipr
+out/
 
 ### NetBeans ###
 /nbproject/private/
@@ -31,3 +32,34 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Application YAML with credentials
+application-dev.yml
+application-dev.yaml
+application-local.yml
+application-local.yaml
+.env
+.env.local
+.env.*.local
+
+### Logs ###
+*.log
+logs/
+*.log.*
+
+### Sistema Operacional ###
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+### Backups e Temporários ###
+*.bak
+*.swp
+*.tmp
+*~
+.#*
