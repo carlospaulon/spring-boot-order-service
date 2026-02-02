@@ -11,11 +11,15 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   mongodb:
     image: mongo:7
     ports:
       - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.6.0
@@ -51,3 +55,20 @@ services:
     image: sonarqube:community
     ports:
       - "9000:9000"
+
+  order-service:
+    build: .
+    container_name: order-service
+    depends_on:
+      - postgres
+      - mongodb
+      - kafka
+      - rabbitmq
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:
+  mongo_data:

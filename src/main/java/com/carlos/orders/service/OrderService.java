@@ -6,12 +6,18 @@ import com.carlos.orders.model.Order;
 import com.carlos.orders.model.OrderLog;
 import com.carlos.orders.repository.OrderMongoRepository;
 import com.carlos.orders.repository.OrderRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.messaging.MessagingException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.NoSuchElementException;
 
+@Slf4j
 @Service
 public class OrderService {
 
@@ -38,16 +44,41 @@ public class OrderService {
                 .orElseThrow(() -> new RuntimeException("Not found"));
     }
 
+    @Transactional
+    @Retryable(
+            value = {MessagingException.class},
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 1000L)
+    )
     public Order create(Order order) {
         Order saved = orderRepository.save(order);
+        log.info("Order created successfully - orderId: {}", saved.getId());
+
 
         mongoRepository.save(
                 new OrderLog(null, saved.getId(), LocalDateTime.now())
         );
+        try {
+            kafkaProducer.send(saved);
+            log.debug("Kafka message sent - orderId: {}", saved.getId());
 
-        kafkaProducer.send(saved);
-        rabbitProducer.publish(saved);
+            rabbitProducer.publish(saved);
+            log.debug("Rabbit message sent - orderId: {}", saved.getId());
+
+
+        } catch (Exception e) {
+            log.error("Failed to create order - product: {}", order.getProduct());
+
+            throw e;
+        }
+
 
         return saved;
+    }
+
+    @Recover
+    public Order recover(MessagingException e, Order order) {
+
+        return order;
     }
 }

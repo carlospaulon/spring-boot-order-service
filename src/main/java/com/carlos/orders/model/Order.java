@@ -1,8 +1,10 @@
 package com.carlos.orders.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "orders")
@@ -14,7 +16,20 @@ public class Order {
 
     private String product;
     private Integer quantity;
+    private BigDecimal price;
 
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    //getters and setters
     public Long getId() {
         return id;
     }
@@ -47,5 +62,4 @@ public class Order {
         this.price = price;
     }
 
-    private BigDecimal price;
 }
