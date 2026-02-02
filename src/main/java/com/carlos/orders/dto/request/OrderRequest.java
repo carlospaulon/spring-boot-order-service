@@ -9,14 +9,17 @@ import java.math.BigDecimal;
 public record OrderRequest(
         //somente isto para request
         @NotBlank
+        //string
         String product,
 
         @NotNull
         @Positive
+        //int
         Integer quantity,
 
         @NotNull
         @Positive
+        //bigdecimal
         BigDecimal price
 ) {
 }
