@@ -29,7 +29,7 @@ docker compose down -v
 docker volume ls # Vê os volumes
 ```
 ---
-> Este README reflete o estado atual do branch `feature/create-order`.
+> Este README reflete o estado atual do branch `main`.
 
 > A execução local sem Docker ainda não está disponível.
 ---
